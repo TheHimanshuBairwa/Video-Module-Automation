@@ -1,0 +1,51 @@
+{% extends 'admin/change_list.html' %}
+{% block object-tools %}
+{% include "opportunity/export_csv.html" with data_dict=tvfpc_fields_dict %}
+
+<style>
+    .csvbtn{
+        width:260px;
+    }
+    #changelist-filter{
+        top:45px !important;
+    }
+</style>
+<script>
+	(function ($) {
+		$('.dropdown-menu').hide();
+		$('.dropdown').on('click',function () {
+			if ($('.dropdown-menu').is(":hidden")){
+						$('.dropdown-menu').show();
+				}
+
+			
+
+});
+	$(document).on('click', function (e) {
+    if ($(e.target).closest(".dropdown").length === 0) {
+        $(".dropdown-menu").hide();
+    }
+});
+	})(django.jQuery);
+
+</script>
+{% if has_add_permission %}
+        <div>
+            <ul class="object-tools">
+                {% block object-tools-items %}
+                  <div style="background: #d3e0e6;">
+                    <form id="upload-csv-form" action="{% url 'admin:upload_csv' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="form-group">
+                        <p><input type="file" name="tv_csv" value="tv_csv" />
+                            <input type="submit" name="upload" value="Upload" />
+                        </p>
+                        </div>
+                    </form>
+                    {% endblock %}
+               </div>
+            </ul>
+        </div>
+     {% endif %}
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'admin/change_list.html' %}
+{% block object-tools %}
+        
+    <div id = "changelist-filter">
+
+
+        <script>
+
+    
+        django.jQuery('document').ready(function () {
+        if (!('DateTimeShortcuts' in window)) {
+            django.jQuery.when(
+                
+                    django.jQuery.getScript('/static/admin/js/calendar.js'),
+                
+                    django.jQuery.getScript('/static/admin/js/admin/DateTimeShortcuts.js'),
+                
+                django.jQuery.Deferred(function( deferred ){
+                    django.jQuery( deferred.resolve );
+                })
+            ).done(function(){
+                django.jQuery('.datetimeshortcuts').remove();
+                DateTimeShortcuts.init();
+            });
+        }
+    });
+        </script>
+
+        <div class = "admindatefilter">
+            <form method = "GET" action = "." id = "video-year-form">
+                <p> 
+                    <input type = "date" name = "video_year_release_range__gte" class = "vDateField" size = "10" placeholder="From date" id="id_video_year_release_range__gte">
+                </p>
+
+                <p> 
+                    <input type = "date" name = "video_year_release_range__lte" class = "vDateField" size = "10" placeholder="To date" id="id_video_year_release_range__lte">
+                </p>
+
+                <input type = "hidden" id = "video-year-query-string" value = "?">
+
+                <div class = "controls"> 
+                    <input type = "submit" class = "button" value = "Search" onclick = "datefilter_apply(event,'video-year-query-string')">
+                    <input type = "reset" class = "button" value = "Reset" onclick = "datefilter_reset(event,'video-year-query-string')">
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+

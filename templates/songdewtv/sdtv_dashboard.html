@@ -1,0 +1,327 @@
+{% extends 'core/base.html' %}
+
+{% block title %} Songdew: Tv Dashboard {% endblock %}
+
+{% block content %}
+
+  {%csrf_token%}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<div class="box box-info">
+    <div class="box-header with-border">
+        <h3 class="box-title">Songdew TV Dashboard</h3>
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
+            </ul>
+            {% endif %}
+    </div>
+
+    <div style="margin:10px;">
+        <form id="daterangeform" method="POST" action='{% url "songdew_tv_dashboard" %}'>
+            {%csrf_token%}
+            <div id="reportrange"
+                style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 25%">
+                <i class="fa fa-calendar"></i>&nbsp;
+                <span></span> <i class="fa fa-caret-down"></i>
+            </div>
+            <input type='text' id="startdate" name="startdate" hidden {% if start_date %} value="{{start_date}}"
+                {%endif%}>
+            <input type='text' id="enddate" name="enddate" hidden {% if end_date %} value="{{end_date}}" {% endif %}>
+
+        </form>
+
+    </div>
+
+
+
+    <script type="text/javascript">
+        let x = 10
+
+        function tvsource(value) {
+            startDateArr = $('#startdate').val().split('-')
+            endDateArr = $('#enddate').val().split('-')
+           
+
+            window.open(`/admin/songdew_tv/ticket/?created_at__range__gte=${startDateArr[2]}%2F${startDateArr[1]}%2F${startDateArr[0]}&created_at__range__lte=${endDateArr[2]}%2F${endDateArr[1]}%2F${endDateArr[0]}&source__exact=${value}`, '_blank')
+    
+        }
+
+        function tv_meta() {
+            startDateArr = $('#startdate').val().split('-')
+            endDateArr = $('#enddate').val().split('-')
+           
+
+            window.open(`/admin/songdew_tv/meta_data_lisiting/?created_at__range__gte=${startDateArr[2]}%2F${startDateArr[1]}%2F${startDateArr[0]}&created_at__range__lte=${endDateArr[2]}%2F${endDateArr[1]}%2F${endDateArr[0]}&source__exact=${value}`, '_blank')
+    
+        }
+        
+
+        $(function () {
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+           
+            function cb(start, end) {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                {% if start_date != null and  end_date != null %}
+                $('#reportrange span').html("{{ start_date }}" + ' - ' + "{{ end_date }}");
+
+                {% endif %}
+            }
+
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Today': [moment(), moment().add(1, 'days')],  
+                    'Yesterday': [moment().subtract(1, 'days'), moment()],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            cb(start, end);
+
+            $('#reportrange').on('apply.daterangepicker', function (ev, picker) {
+                
+              
+
+
+
+                $('#startdate').val(picker.startDate.format('YYYY-MM-DD'));
+                $('#enddate').val(picker.endDate.format('YYYY-MM-DD'));
+
+                $('#daterangeform').submit()
+                $("#website_upload").html(response.website_upload);
+        
+                $("#website_broadcast").html(response.website_broadcast);
+                $("#offline_reachout").html(response.offline_reachout);
+                $("#offline_label").html(response.offline_label);
+                $("#offline_music_release").html(response.offline_music_release);
+                $("#offline_others").html(response.offline_others);
+                $("#agreement_sent").html(response.agreement_sent);
+                $("#meta_data_created").html(response.meta_data_created);
+                $("#agreement_signed").html(response.agreement_signed);
+                $("#broadcast_ready").html(respone.broadcast_ready);
+                $("#approved_website").html(respone.approved_website);
+                $("#rejected_website").html(respone.rejected_website);
+                $("#todo_website").html(respone.todo_website);
+
+
+
+
+
+            });
+
+           
+
+
+
+            
+
+        });
+    </script>
+
+    <div class="box-body" id ="dashboard-container">
+
+        <div class="row">
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></i></span>
+                <div class="info-box-content">
+                    <a onclick = 'tvsource(1)' id="webupload">Website - Upload</a>
+                    <span class="info-box-number" id="website_upload">{{website_upload}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></i></span>
+                <div class="info-box-content">
+                    <a id="webupload">Website - Upload - Approved</a>
+                    <span class="info-box-number" id="approved_website">{{approved_website}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></i></span>
+                <div class="info-box-content">
+                    <a  id="webupload">Website - Upload - Rejected</a>
+                    <span class="info-box-number" id="rejected_website">{{rejected_website}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></i></span>
+                <div class="info-box-content">
+                    <a  id="webupload">Website - Upload - To Do</a>
+                    <span class="info-box-number" id="todo_website">{{todo_website}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+
+
+
+
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></span>
+                <div class="info-box-content">
+                    <a onclick = 'tvsource(2)'>Website - Broadcast</a>
+                    <span class="info-box-number" id="website_broadcast">{{website_broadcast}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></span>
+                <div class="info-box-content">
+                    <a onclick = 'tvsource(3)'>Offline - Reachout</a>
+                    <span class="info-box-number" id="offline_reachout">{{offline_reachout}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+     
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></span>
+                <div class="info-box-content">
+                    <a onclick = 'tvsource(4)'>Offline - Label</a>
+                    <span class="info-box-number" id="offline_label">{{offline_label}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+        
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></span>
+                <div class="info-box-content">
+                    <a onclick = 'tvsource(5)'>Offline - Music Release</a>
+                    <span class="info-box-number" id="offline_music_release">{{offline_music_release}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+
+        
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></span>
+                <div class="info-box-content">
+                    <a onclick = 'tvsource(6)'>Offline - Others</a>
+                    <span class="info-box-number" id="offline_others">{{offline_others}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+
+        
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></span>
+                <div class="info-box-content">
+                    <a href="/admin/agreement/createdagreement/" target="_blank">Agreement not Signed</a>
+                    <span class="info-box-number" id="agreement_sent">{{agreement_sent}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></span>
+                <div class="info-box-content">
+                    <a href="/admin/agreement/createdagreement/" target="_blank">Agreement Signed</a>
+                    <span class="info-box-number" id="agreement_signed">{{agreement_signed}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></span>
+                <div class="info-box-content">
+                    <a  href = "/admin/songdew_tv/meta_data_lisiting/" target = '_blank'>Meta Data Created</a>
+                    <span class="info-box-number" id="meta_data_created">{{meta_data_created}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><iconify-icon icon="ion:musical-notes-outline" style="color: #000000;"></iconify-icon></span>
+                <div class="info-box-content">
+                    <a  href = "/admin/songdew_tv/meta_data_lisiting/" target = '_blank'>Broadcast Ready Videos</a>
+                    <span class="info-box-number" id="meta_data_created">{{broadcast_ready}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+
+
+        <!-- ... Your existing HTML code ... -->
+
+    </div>
+    </div>
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    {% endblock %}

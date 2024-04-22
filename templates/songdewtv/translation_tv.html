@@ -1,0 +1,205 @@
+<style>
+    .translate, #add_songs{
+         display:inline-block;
+       }
+   </style>
+   <!-- Translation button -->
+    <div class="translate">
+       <button type="button" class="btn btn-info" data-toggle="modal" data-target="#{{field}}">Translate</button>
+       <div class="modal" id="{{field}}" role="dialog">
+         <div class="modal-dialog">
+   
+           <!-- Modal content-->
+           <div class="modal-content">
+             <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">&times;</button>
+               <h3 class="modal-title">Translate</h3>
+               <hr>
+             </div>
+             <div class="modal-body">
+   
+   
+               <label for="lang" >Pick the language: </label>
+               <select id="lang" name="lang" onchange="handleLanguage('{{field}}')">
+                 <option hidden disabled selected value> -- select an option -- </option>
+                 <option value="bn" {% if oppor_multilanguage.lang == "bn" %} selected {% endif %}>Bengali</option>
+                 <option value="gu" {% if oppor_multilanguage.lang == "gu" %} selected {% endif %}>Gujarati</option>
+                 <option value="hi" {% if oppor_multilanguage.lang == "hi" %} selected {% endif %}>Hindi</option>
+                 <option value="ja" {% if oppor_multilanguage.lang == "ja" %} selected {% endif %}>Japanese</option>
+                 <option value="ml" {% if oppor_multilanguage.lang == "ml" %} selected {% endif %}>Malayalam</option>
+                 <option value="pa" {% if oppor_multilanguage.lang == "pa" %} selected {% endif %}>Punjabi</option>
+                 <option value="ta" {% if oppor_multilanguage.lang == "ta" %} selected {% endif %}>Tamil</option>
+                 <option value="te" {% if oppor_multilanguage.lang == "te" %} selected {% endif %}>Telugu</option>
+                 <input type="hidden" id="hidden_lang" value={{oppor_multilanguage.lang}}>
+   
+               </select>
+   
+   
+                  <br><br>
+   
+   
+           {% if field == 'keydescription' %}
+                  <textarea  id="key_message_translated" name="key_message_translated">{{oppor_multilanguage.key_message}}</textarea>
+                   <script type="text/javascript">
+                       CKEDITOR.replace( 'key_message_translated',{  } );
+           </script>
+           {% endif %}
+           {% if field == 'description' %}
+                  <div id="trans" {% if oppor_multilanguage.lang == "" or oppor_multilanguage.lang == None %} style="display:none"{% endif %}>
+                  <textarea  id="opportunity_descrip_translated" name="opportunity_descrip_translated">{{oppor_multilanguage.description}}</textarea>
+                  </div><br>
+                  <input type="checkbox" id="trans_is_published" name="trans_is_published" {% if oppor_multilanguage.is_published %} checked {% endif %}>
+                  <label for="trans_is_published">Only select this checkbox if all the translations are done completely</label><br>
+                   <script type="text/javascript">
+                     CKEDITOR.replace( 'opportunity_descrip_translated',{  } );
+           </script>
+           {% endif %}
+       {% if field == 'aboutpartner' %}
+                      <textarea id="about_partner_translated" name="about_partner_translated">{{oppor_multilanguage.about_partner}}</textarea>
+           <script type="text/javascript">
+           CKEDITOR.replace( 'about_partner_translated',{  } );
+           </script>
+       {% endif %}
+   
+       {% if field == 'rewards_tras' %}
+                       <textarea  id="rewards_translated" name="rewards_translated">{{oppor_multilanguage.rewards}}</textarea>
+           <script type="text/javascript">
+           CKEDITOR.replace( 'rewards_translated',{  } );
+           </script>
+       {% endif %}
+       {% if field == 'terms_trans' %}
+                   <textarea  id="term_and_cond_translated" name="term_and_cond_translated">{{oppor_multilanguage.term_and_cond}}</textarea>
+           <script type="text/javascript">
+           CKEDITOR.replace( 'term_and_cond_translated',{  } );
+           </script>
+       {% endif %}
+   
+   
+       <script type="text/javascript">
+             var fType='';
+                     function handleLanguage(field){
+   
+               if(field ==='keydescription'){
+                         $("#trans").show();
+                         var text = CKEDITOR.instances['key_message'].getData();
+                         var lang = $("#lang").val();
+   
+                         $.ajax({
+                           url: "/opportunity/opportunity_translate",
+                           type: 'get',
+                           dataType: "json",
+                           data: {
+                             lang:lang,
+                             text: text
+   
+                           },
+                           success: function( data ) {
+                               console.log(data);
+                               CKEDITOR.instances['key_message_translated'].setData(data);
+                           }
+                       });
+                   fType = field;
+               } 
+               if(field ==='description'){
+                         $("#trans").show();
+                         var text = CKEDITOR.instances['opportunity_descrip'].getData();
+                         var lang = $("#lang").val();
+   
+                         $.ajax({
+                           url: "/opportunity/opportunity_translate",
+                           type: 'get',
+                           dataType: "json",
+                           data: {
+                             lang:lang,
+                             text: text
+   
+                           },
+                           success: function( data ) {
+                               console.log(data);
+                               CKEDITOR.instances['opportunity_descrip_translated'].setData(data);
+                           }
+                       });
+                   fType = field;
+               } 
+               
+               if(field ==='aboutpartner'){ 
+                   var text = CKEDITOR.instances['about_partner'].getData();
+                   var lang = $("#lang").val();
+   
+                   $.ajax({
+                       url: "/opportunity/opportunity_translate",
+                       type: 'get',
+                       dataType: "json",
+                       data: {
+                       lang:lang,
+                       text: text
+   
+                   },
+                   success: function( data ) {
+                   console.log(data);
+                   CKEDITOR.instances['about_partner_translated'].setData(data);
+                   }
+                   });
+               }
+               if(field ==='rewards_tras'){
+                   var text = CKEDITOR.instances['rewards'].getData();
+                   console.log(CKEDITOR.instances['rewards'].getData())
+                   var lang = $("#lang").val();
+   
+                   $.ajax({
+                     url: "/opportunity/opportunity_translate",
+                     type: 'get',
+                     dataType: "json",
+                     data: {
+                       lang:lang,
+                       text: text
+   
+                     },
+                     success: function( data ) {
+                         console.log(data);
+                         CKEDITOR.instances['rewards_translated'].setData(data);
+                     }
+                   });
+               }
+               if(field ==='terms_trans'){
+                   var text = CKEDITOR.instances['term_and_cond'].getData();
+                   var lang = $("#lang").val();
+   
+                   $.ajax({
+                       url: "/opportunity/opportunity_translate",
+                       type: 'get',
+                       dataType: "json",
+                       data: {
+                       lang:lang,
+                       text: text
+   
+                       },
+                       success: function( data ) {
+                           console.log(data);
+                           CKEDITOR.instances['term_and_cond_translated'].setData(data);
+                       }
+                   });
+               }
+   
+                     }
+           
+                     var hidden_lang = $("#hidden_lang").val();
+                     console.log($("#lang").val())
+                     console.log(hidden_lang)
+                     if ($("#lang").val()==hidden_lang){
+                       $(lang).attr("selected")
+                     }
+   
+                     // var translated = CKEDITOR.instances['opportunity_descrip_translated'].getData();
+   
+                   </script>
+             </div>
+             <div class="modal-footer">
+                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+             </div>
+           </div>
+   
+       </div>
+     </div>
+    </div>
+   

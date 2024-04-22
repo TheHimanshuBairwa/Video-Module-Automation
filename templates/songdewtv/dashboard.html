@@ -1,0 +1,229 @@
+{% extends 'core/base.html' %}
+{% block title %}Songdew TV Report{% endblock %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<div class="box box-info" id="html" >
+    <div class="box-header with-border">
+        <h3 class="box-title">Songdew TV Dashboard</h3>
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 25%">
+            <i class="fa fa-calendar"></i>&nbsp;
+            <span></span> <i class="fa fa-caret-down"></i>
+        </div>
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+        <script type="text/javascript">
+            $(function () {
+                var start = moment().subtract(29, 'days');
+                var end = moment();
+                console.log(start)
+                console.log(end)
+
+                function cb(start, end) {
+                    $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                }
+
+                $('#reportrange').daterangepicker({
+                    startDate: start,
+                    endDate: end,
+                    ranges: {
+                        'Today': [moment(), moment().add(1, 'days')],  
+                        'Yesterday': [moment().subtract(1, 'days'), moment()],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    }
+                }, cb);
+
+                cb(start, end);
+
+                $('#reportrange').on('apply.daterangepicker', function (ev, picker) {
+                    console.log('picker is ', picker);
+                    $.ajax({
+                        method: "POST",
+                        url: "",  // Change the URL to your view function URL
+                        data: { startdate: picker.startDate.format('YYYY-MM-DD'), enddate: picker.endDate.format('YYYY-MM-DD') },
+                        beforeSend: function () {
+                            $("#website_upload").html('Loading..')
+
+                            $("#website_broadcast").html('Loading..')
+                            $("#offline_reachout").html('Loading..')
+                            $("#offline_label").html('Loading..')
+                            $("#offline_music_release").html('Loading..')
+                            $("#offline_others").html('Loading..')
+                            
+                            $("#agreement_sent").html('Loading..')
+                            $("#agreement_signed").html('Loading..')
+                            $("#meta_data_created").html('Loading..')
+                        },
+                    }).done(function (response) {
+                        //console.log("printing response",response)
+                        // Update the content of the "Website - Upload" section with the obtained count
+                        $("#website_upload").html(response.website_upload);
+                       // $("#website_upload").html('<a href="{% url 'admin:songdew_tv_ticket_changelist' %}?created_at__range__gte=' + start_date.format('YYYY-MM-DD') + '&created_at__range__lte=' + end_date.format('YYYY-MM-DD') + '">' + response.website_upload + '</a>');
+                        $("#website_broadcast").html(response.website_broadcast);
+                        $("#offline_reachout").html(response.offline_reachout);
+                        $("#offline_label").html(response.offline_label);
+                        $("#offline_music_release").html(response.offline_music_release);
+                        $("#offline_others").html(response.offline_others);
+                        $("#agreement_sent").html(response.agreement_sent);
+                        $("#meta_data_created").html(response.meta_data_created);
+                        $("#agreement_signed").html(response.agreement_signed);
+
+                        // ... Your existing code to update other sections ...
+
+                    }).fail(function (error) {
+                        console.log(error);
+                        console.log('failure');
+                    });
+                });
+
+            });
+        </script>
+
+        <!-- ... Your existing HTML code ... -->
+
+        <div class="box-body" id ="dashboard-container">
+
+        <div class="row">
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><i class=" ion-ios-cloud-upload "></i></span>
+                <div class="info-box-content">
+                    <span>Website - Upload</span>
+                    <span class="info-box-number" id="website_upload">{{website_upload}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><i class=" ion-ios-cloud-upload "></i></span>
+                <div class="info-box-content">
+                    <span>Website - Broadcast</span>
+                    <span class="info-box-number" id="website_broadcast">{{website_broadcast}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><i class=" ion-ios-cloud-upload "></i></span>
+                <div class="info-box-content">
+                    <span>Offline - Reachout</span>
+                    <span class="info-box-number" id="offline_reachout">{{offline_reachout}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+     
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><i class=" ion-ios-cloud-upload "></i></span>
+                <div class="info-box-content">
+                    <span>Offline - Label</span>
+                    <span class="info-box-number" id="offline_label">{{offline_label}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+        
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><i class=" ion-ios-cloud-upload "></i></span>
+                <div class="info-box-content">
+                    <span>Offline - Music Release</span>
+                    <span class="info-box-number" id="offline_music_release">{{offline_music_release}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+
+        
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><i class=" ion-ios-cloud-upload "></i></span>
+                <div class="info-box-content">
+                    <span>Offline - Others</span>
+                    <span class="info-box-number" id="offline_others">{{offline_others}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+
+        
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><i class=" ion-ios-cloud-upload "></i></span>
+                <div class="info-box-content">
+                    <span>Agreement Sent</span>
+                    <span class="info-box-number" id="agreement_sent">{{agreement_sent}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><i class=" ion-ios-cloud-upload "></i></span>
+                <div class="info-box-content">
+                    <span>Agreement Signed</span>
+                    <span class="info-box-number" id="agreement_signed">{{agreement_signed}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+                <span class="info-box-icon bg-olive"><i class=" ion-ios-cloud-upload "></i></span>
+                <div class="info-box-content">
+                    <span>Meta Data Created</span>
+                    <span class="info-box-number" id="meta_data_created">{{meta_data_created}}</span>
+                </div>
+                <!-- /.info-box-content -->
+                <!-- /.info-box -->
+            </div>
+        </div>
+
+
+
+        <!-- ... Your existing HTML code ... -->
+
+    </div>
+    </div>
+
+</div>
+</div>
+
+{% endblock %}

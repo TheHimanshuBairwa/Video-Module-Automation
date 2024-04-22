@@ -1,0 +1,497 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Song Distribution {% endblock %}
+
+{% block content %}
+
+<div class="box box-info">
+    <div class="box-header with-border">
+        <h3 class="box-title">Song Distribution</h3>
+        <br><br>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'album_show' %}">Backend</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'show_distribution_album' %}">Frontend</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" style="background: #3c8dbc;color: aliceblue;"
+                    href="{% url 'show_completed_song_distribution' %}">Frontend songs</a>
+            </li>
+        </ul>
+        <br><br>
+        <div class="row">
+            <form>
+          <div  class="col-sm-3">
+         <input type="text" name="val" value="{{searchTerm}}">
+
+            <input type="submit" name="Search" value="Search">
+         </div>
+    </form>
+          <div class="col-sm-6" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;margin-right: 20px;">
+
+          <div class="row">
+
+                <div class="col-sm-4">
+                <form id="daterangeform"  >{% csrf_token %}
+              <label for="privacy" style="" >Privacy: </label>
+          <select id="privacy" required name="privacy" onchange="this.form.submit()" style="width:72%">
+	    <option class=""  value="" {% if privacy == ''%}  selected= "selected" {% endif %}>All</option>
+            <option class=""  value="public" {% if privacy == 'public'%}  selected= "selected" {% endif %}>Public</option>
+            <option class=""  value="private" {% if privacy == 'private'%}  selected= "selected" {% endif %}>Private</option>
+            <option class=""  value="scheduled" {% if privacy == 'scheduled'%}  selected= "selected" {% endif %}>Scheduled</option>
+
+          </select><br>
+
+              </div>
+              <div class="col-sm-4">
+
+              <label for="privacy" style=""> Date Type: </label>
+          <select id="daterange" required name="daterange"  style="width:72%">
+            <option class=""  value="created_date" {% if daterange == 'created_date'%}  selected= "selected" {% endif %}>Created Date</option>
+            <option class=""  value="release_date" {% if daterange == 'release_date'%}  selected= "selected" {% endif %}>Release Date</option>
+            <option class=""  value="updated_date" {% if daterange == 'updated_date'%}  selected= "selected" {% endif %}>Updated Date</option>
+          </select><br>
+              </div>
+
+                <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+                    <div class="col-sm-4">
+                         <label ></label>
+               <div id="reportrange">
+                   <i class="fa fa-calendar"></i>&nbsp;
+                   <span></span> <i class="fa fa-caret-down"></i>
+                </div>
+                <input type='text' id="startdate" name="startdate" hidden {% if start_date %} value="{{start_date}}"
+                {%endif%}>
+                 <input type='text' id="enddate" name="enddate" hidden {% if end_date %} value="{{end_date}}" {% endif %}>
+          </div>
+        </form>
+          </div>
+          </div>
+            <div class="col-sm-2">
+            </div>
+            {% include "opportunity/export_csv.html" with data_dict=song_dist_fields extra_data_dict=irsc_export_dict%}
+        </div>
+
+
+        <br>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <div class="box-body">
+        <div class="table-responsive">
+            <table class="table no-margin">
+                <p>{{ message }}</p>
+                <thead>
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Primary Artist</th>
+                        <th>Author</th>
+                        <th>Status</th>
+                        <th>Created Date</th>
+                        <th>Updated Date</th>
+                        <th>Release Date</th>
+                        <th colspan="3" style="text-align:center;"> Action </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if completed_song_distribution_list %}
+                    {% for song in completed_song_distribution_list %}
+                    <tr>
+                        <td>{{song.id}}</td>
+                        <td><a href="https://songdew.com/songs/{{song.slug_usersong}}"
+                                target="_blank">{{song.title}}</a></td>
+                        <td>{{song.user.username}}</td>
+                        <td>{{song.author}}</td>
+                        <td> {{song.privacy}}</td>
+                        <td>{{song.created_date}}</td>
+                        <td>{{song.updated_date}}</td>
+                        <td>{{song.release_date}}</td>
+                        <td>
+                            <a href="{% url 'add_song_distribution' song.id %}" type="button"
+                                class="btn btn-block btn-primary btn-xs">Edit</a>
+                            {% if song.rfca == 1 %}
+                            <a href="{% url 'song_rcfa_banner' song.user_id song.id %}" type="button"
+                                class="btn btn-block btn-info btn-xs">RCFA</a>
+                            {% elif song.rfca == 2 %}
+                            <a type="button" class="btn btn-block btn-success btn-xs">RCFA-Requested</a>
+                            {% else %}
+                            <a href="{% url 'song_rcfa_banner' song.user_id song.id%}" type="button"
+                                class="btn btn-block btn-primary btn-xs">RCFA</a>
+                            {% endif %}
+                            {% if song.air == 1 %}
+                            <a href="{% url 'song_air_banner' song.user_id song.id %}" type="button"
+                                class="btn btn-block btn-info btn-xs">AIR</a>
+                            {% elif song.air == 2 %}
+                            <a type="button" class="btn btn-block btn-success btn-xs">AIR-Requested</a>
+                            {% else %}
+                            <a href="{% url 'song_air_banner' song.user_id song.id%}" type="button"
+                                class="btn btn-block btn-primary btn-xs">AIR</a>
+                            {% endif %}
+                            {% if song.radio_gupshup == 1 %}
+                            <a href="{% url 'song_radio_gupshup_banner' song.user_id song.id %}" type="button"
+                                class="btn btn-block btn-info btn-xs">Radio Gupshup</a>
+                            {% elif song.radio_gupshup == 2 %}
+                            <a type="button" class="btn btn-block btn-info btn-xs">Radio Gupshup-Processed</a>
+                            {% else %}
+                            <a href="{% url 'song_radio_gupshup_banner' song.user_id song.id%}" type="button"
+                                class="btn btn-block btn-primary btn-xs">Radio Gupshup</a>
+                            {% endif %}
+
+                            {% if song.remove_from_fresh != 0 %}
+                            <a href="{% url 'song_remove_from_fresh' song.user_id song.id %} " type="button"
+                                class="btn btn-block btn-success btn-xs">Songdew Fresh Listed</a>
+                            {% else %}
+                            <a href="{% url 'song_remove_from_fresh' song.user_id song.id %} " type="button"
+                                class="btn btn-block btn-primary btn-xs">Songdew Fresh unlisted</a>
+                            {% endif %}
+
+                            {% if song.qr_code %}
+                            <a href="{% url 'add_qr_code_image' song.user_id  song.id  %} " type="button"
+                                class="btn btn-block btn-success btn-xs">QR code Available</a>
+                            {% else %}
+                            <a href="{% url 'add_qr_code_image' song.user_id  song.id  %} " type="button"
+                                class="btn btn-block btn-primary btn-xs">QR code not Available</a>
+                            {% endif %}
+                            <a href="{% url 'add_qr_code_image' song.user_id  song.id  %} " type="button"
+                                class="btn btn-block btn-primary btn-xs">Publish</a>
+                            <a href="{% url 'add_qr_code_image' song.user_id  song.id  %} " type="button"
+                                class="btn btn-block btn-primary btn-xs">Promotional Tools</a>
+
+                              <div>
+              <button type="button" class="btn btn-block btn-primary btn-xs" data-toggle="modal" data-target="#alb{{song.id}}" onclick="getComment({{song.id}})">
+  View SD Status</button>
+
+<div class="modal fade" id="alb{{song.id}}" tabindex="-1" role="dialog" aria-labelledby="#alb{{song.id}}" aria-hidden="true" style="overflow-y: auto; height:95vh">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" style=" font-size: 30px; font-weight: 700;"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+          <div style=" font-size: 30px; font-weight: 700;">{{song.title}}</div>
+      </div>
+      <div class="modal-body">
+          <div class=" ">
+           <div class="">
+               <label for="status" style=" font-size: 15px; font-weight: 600;" >Status:</label>
+               <select style="margin-bottom: 30px;  margin-left: 15px; width: 100px;height: 30px;}" id="status{{song.id}}" required name="status" style="width:30%" >
+                   <option  class="" value="" >Selected</option>
+                   <option  class="" value="Incomplete"{% if status == 'Incomplete'%} selected="selected" {% endif %}>Incomplete</option>
+                   <option  class="" value="Under Review"{% if status == 'Under Review'%} selected="selected" {% endif %}>Review</option>
+                   <option  class="" value="Released" {% if status == 'Released'%} selected="selected" {% endif %}>Released</option>
+               </select>
+           </div>
+              <div class=" ">
+              <div class=" ">
+                  <label margin-top="5px;" style="display: block; font-size: 15px; font-weight: 600;"  for="comment">Comment:</label>
+                  <textarea  type="text"  rows="4" cols="30" name="comment" margin-top="5px;" id={{song.id}} placeholder=""></textarea>
+                  <button  type="button"  class="btn btn-info" style="margin-bottom: 30px;  margin-left: 15px;" onclick="btnClick('{{song.id}}','song')" margin="px">Save</button>
+              </div>
+                  <div  class=" ">
+                  </div>
+              </div>
+          </div>
+<div>
+          </div>
+        <div class="box">
+        <div class="box-body" style="max-height:400px;overflow-y:auto;">
+            <div class="table-responsive">
+                <table class="table no-margin" >
+                    <a><caption style="text-align:center;"><Strong>Show Status</Strong></caption></a>
+                    <thead>
+                        <tr>
+                        <th>S. No</th>
+                        <th>Status</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        <th>Comment</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        <th>Created Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                 <ul  style="padding-left:10px; list-style-type: none;" id="sn2{{song.id}}">
+                                    <li > </li>
+                                </ul>
+
+                            </td>
+                            <td>
+                                <ul style="padding-left:10px; list-style-type: none;" id="status2{{song.id}}">
+                                    <li ></li>
+                                </ul>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <ul style="padding-left:10px; list-style-type: none;" id="comment2{{song.id}}">
+                                    <li ></li>
+                                </ul>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <ul style="padding-left:10px; list-style-type: none;" id="date2{{song.id}}">
+                                    <li ></li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+
+                        </td>
+                        <td><a href="{% url 'add_song_instastory' song.id song.user_id  %}" type="button"
+                                class="btn btn-block btn-primary btn-xs">Create Insta Story</a></td>
+                        <td><a href="{% url 'add_songinstavideostory' song.id song.user_id  %}" type="button"
+                                class="btn btn-block btn-primary btn-xs">Create Insta Video Story</a></td>
+                        <td><a href="{% url 'upload_song_instastory' song.id song.user_id  %}" type="button"
+                               class="btn btn-block btn-primary btn-xs" >Upload Insta Story</a></td>
+                            <td><a type="button" class="btn btn-block btn-primary btn-xs"
+                                    href="{% url 'add_show_song_promo' song.id  song.user_id  %}">Song Promos</a></td>
+                                    <td><a href="{% url 'add_songvideo' song.id song.user_id %}"
+                                            type="button" class="btn btn-block btn-primary btn-xs">Add Music Video</a></td>
+                    </tr>
+
+                    {% endfor %}
+                {% endif%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+  <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+    <ul class="pagination">
+        {% if completed_song_distribution_list.has_previous %}
+        <li><a href="?page={{ completed_song_distribution_list.previous_page_number }}&val={{ searchTerm }}&privacy={{ privacy }}">&laquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>&laquo;</span></li>
+        {% endif %}
+        {% for i in completed_song_distribution_list.paginator.page_range %}
+            {% if completed_song_distribution_list.number == i %}
+            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+            {% elif i > completed_song_distribution_list.number|add:'-10' and i < completed_song_distribution_list.number|add:'10' %}
+            <li><a class="pagination-number" href="?page={{ i }}&val={{ searchTerm }}&privacy={{ privacy }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if completed_song_distribution_list.has_next %}
+        <li><a href="?page={{ completed_song_distribution_list.next_page_number }}&val={{ searchTerm }}&privacy={{ privacy }}">&raquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+    </ul>
+</div>
+
+            <script>
+                    function getComment(songId) {
+                        console.log("songId", songId)
+                         $.get("/distribution/song-status/", {media_id: songId} ,function(data){
+
+                         console.log("Data", data)
+
+                         $('#comment2'+ songId ).empty()
+                         $('#sn2'+ songId ).empty()
+                         $('#status2'+ songId ).empty()
+                         $('#date2'+ songId ).empty()
+                                 let comments = (JSON.parse(data)).comment
+                                for(let [i,comment] of comments.entries()) {
+                                  let liElem = document.createElement("li");
+                                     liElem.textContent = comment
+                                   document.getElementById('comment2'+ songId).append(liElem)
+                                   let liSn = document.createElement("li");
+                                     liSn.textContent = i+1
+                                   document.getElementById('sn2'+ songId).append(liSn)
+                                }
+
+
+                                 let st = (JSON.parse(data)).status
+                                for (let status of st){
+                                   console.log(status)
+                                  let liElem =document.createElement("li");
+                                  liElem.textContent = status
+                                document.getElementById('status2' +songId).append(liElem)
+                                }
+
+                                 let da = (JSON.parse(data)).created_date
+                                for (let date of da){
+                                   console.log(date)
+                                  let liDate =document.createElement("li");
+                                  liDate.textContent = date
+                                document.getElementById('date2' +songId).append(liDate)
+                                }
+
+
+                            }).fail((error)=>{
+                            console.log('Error',error)});
+                    }
+                    function btnClick(songId, mediaType){
+                            console.log(songId, mediaType)
+                            console.log("Option Value", $('#status'+ songId).val())
+                             let comment = $('#'+songId).val();
+                            console.log("Comment", $('#'+songId).val())
+
+                            if($('#status'+ songId).val() != "" && comment.length>0) {
+
+                             $.post({
+                              type: 'POST',
+                              url: "/distribution/song-status/",
+                              data: {
+                                comment: comment,
+                                media_id:songId,
+                                media_type:mediaType,
+                                status: $('#status'+ songId).val(),
+                              },
+                              success: function(data) {
+                                $('#'+songId).val("");
+                                $('#comment2'+ songId ).empty()
+                                $('#sn2'+ songId ).empty()
+                                $('#status2'+ songId ).empty()
+                                 $('#date2'+ songId ).empty()
+                                 let comments = (JSON.parse(data)).comment
+                                for(let [i,comment] of comments.entries()) {
+                                  let liElem = document.createElement("li");
+                                     liElem.textContent = comment
+                                   document.getElementById('comment2'+ songId).append(liElem)
+                                   let liSn = document.createElement("li");
+                                     liSn.textContent = i+1
+                                   document.getElementById('sn2'+ songId).append(liSn)
+                                }
+
+                                 let st = (JSON.parse(data)).status
+                                for (let status of st){
+                                  let liElem =document.createElement("li");
+                                  liElem.textContent = status
+                                document.getElementById('status2' +songId).append(liElem)
+                                }
+
+                                let da = (JSON.parse(data)).created_date
+                                for (let date of da){
+                                   console.log(date)
+                                  let liDate =document.createElement("li");
+                                  liDate.textContent = date
+                                document.getElementById('date2' +songId).append(liDate)
+                                }
+
+
+<!--                                console.log("comment", document.getElementById('comment2'+ songId).innerHTML=data.comment)-->
+
+                              },
+                            })
+                            }else {
+                             const mess = $('#status'+ songId).val() == ''? "Please Select status": "Please write comment"
+                                alert(mess )
+                                    console.log("Comment not save", $('#status'+ songId).val() == "", comment.length>0)
+                             }
+                          }
+
+            </script>
+
+
+
+
+<script type="text/javascript">
+        $(function () {
+
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                {% if start_date != null and  end_date != null %}
+                $('#reportrange span').html("{{ start_date }}" + ' - ' + "{{ end_date }}");
+
+                {% endif %}
+            }
+
+
+            $('#reportrange').daterangepicker({
+                startdate: start,
+                enddate: end,
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            cb(start, end);
+
+            $('#reportrange').on('apply.daterangepicker', function (ev, picker) {
+
+
+                $('#startdate').val(picker.startDate.format('YYYY-MM-DD'));
+                $('#enddate').val(picker.endDate.format('YYYY-MM-DD'));
+                $('#daterangeform').submit()
+            });
+
+            $("#export").click(function () {
+                var sdd = new Date($('#startdate2').val())
+                sdd.setDate(sdd.getDate() + 1)
+                var sd = sdd.toISOString().slice(0, 10);
+                var edd = new Date($('#enddate2').val())
+                edd.setDate(edd.getDate() + 1)
+                var ed = edd.toISOString().slice(0, 10);
+                $('#startdate2').val(sd);
+                $('#enddate2').val(ed);
+                $('#export_report').submit()
+            });
+
+        });
+    </script>
+
+
+ <script type="text/javascript">
+
+  jQuery(function() {
+    jQuery('#daterange').change(function() {
+        this.form.submit();
+    });
+});
+</script>
+
+
+ <script type="text/javascript">
+
+  jQuery(function() {
+    jQuery('#privacy').change(function() {
+        this.form.submit();
+    });
+});
+</script>
+
+
+<!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+{% endblock %}

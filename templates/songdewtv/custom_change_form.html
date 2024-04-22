@@ -1,0 +1,236 @@
+{% extends 'admin/change_form.html' %}
+{% block object-tools %}
+
+
+
+   {% comment %} <!-- your_template.html -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" onclick="openModalWithData()">
+        Launch demo modal
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Update Songdew URL</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalBodyContent">
+                    <!-- Dynamic content will be added here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="update_songdew_url()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Additional script for opening the modal with data -->
+    <script>
+        function openModalWithData() {
+            // Example data, replace this with the data you want to pass
+            var data = [
+                { songdew_url: 'https://example.com/song1' },
+                { songdew_url: 'https://example.com/song2' },
+                { songdew_url: 'https://example.com/song3' }
+            ];
+
+            // Clear existing content in modal body
+            $('#modalBodyContent').empty();
+
+            // Add new content based on the data
+            data.forEach(function (entry) {
+                // Create a checkbox and link for each entry
+                var checkbox = '<input type="checkbox" name="song_checkbox" value="' + entry.songdew_url + '"> ';
+                var link = '<a href="' + entry.songdew_url + '">' + entry.songdew_url + '</a><br>';
+
+                // Append the checkbox and link to the modal body
+                $('#modalBodyContent').append(checkbox + link);
+            });
+
+            // Show the modal
+            $('#exampleModalCenter').modal('show');
+
+            // Call the open_popup_dialog function
+            open_popup_dialog();
+        }
+
+        function update_songdew_url() {
+            // Add logic for updating songdew URLs
+            $.ajax({
+                url: 'update_songdew_url/',
+                type: 'POST',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}', // Include CSRF token
+                    songdew_url: 'Updated URL' // Replace with the actual data
+                },
+                success: function (response) {
+                    alert('Successfully updated songdew URLs');
+                    // Close the modal if needed
+                    $('#exampleModalCenter').modal('hide');
+                },
+                error: function (error) {
+                    alert('Error updating songdew URLs');
+                    console.error(error);
+                }
+            });
+        }
+
+        function open_popup_dialog() {
+            // Add logic for opening the popup dialog
+            $.ajax({
+                url: 'open_popup_dialog/',
+                type: 'GET',
+                success: function (response) {
+                    // Handle the response, e.g., update modal content
+                    console.log('Popup dialog opened successfully');
+                },
+                error: function (error) {
+                    alert('Error opening popup dialog');
+                    console.error(error);
+                }
+            });
+        }
+    </script>
+ 
+    
+
+   
+
+
+
+
+ {% endcomment %}
+
+
+
+
+{% comment %} <link rel="stylesheet" href="/static/bootstrap.min.css">  {% endcomment %}
+ {% comment %} <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+ <script src="/static/bootstrap.min.js"></script> {% endcomment %} 
+
+ <style>
+
+    .modal-window {
+        position: fixed;
+        background-color: rgba(255, 255, 255, 0.25);
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 999;
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s;
+        &:target {
+          visibility: visible;
+          opacity: 1;
+          pointer-events: auto;
+        }
+        & > div {
+          width: 400px;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          padding: 2em;
+          background: white;
+        }
+        header {
+          font-weight: bold;
+        }
+        h1 {
+          font-size: 150%;
+          margin: 0 0 15px;
+        }
+      }
+      
+      .modal-close {
+        color: #aaa;
+        line-height: 50px;
+        font-size: 80%;
+        position: absolute;
+        right: 0;
+        text-align: center;
+        top: 0;
+        width: 70px;
+        text-decoration: none;
+        &:hover {
+          color: black;
+        }
+      }
+      
+      /* Demo Styles */
+      
+      html,
+      body {
+        height: 100%;
+      }
+      
+      html {
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      body {
+        font-family: apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans,
+          Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+        font-weight: 600;
+        {% comment %} background-image: linear-gradient(to right, #7f53ac 0, #657ced 100%); {% endcomment %}
+        color: black;
+      }
+      
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      
+      .container {
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      
+      .modal-window {
+        & > div {
+          border-radius: 1rem;
+        }
+      }
+      
+      .modal-window div:not(:last-of-type) {
+        margin-bottom: 15px;
+      }
+      
+      .logo {
+        max-width: 150px;
+        display: block;
+      }
+      
+      small {
+        color: lightgray;
+      }
+      
+      .btn {
+        background-color: white;
+        padding: 1em 1.5em;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        i {
+          padding-right: 0.3em;
+        }
+      }
+
+ </style>
+
+ 
+{% endblock %}

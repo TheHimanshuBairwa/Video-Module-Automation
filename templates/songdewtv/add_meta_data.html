@@ -1,0 +1,570 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<head>
+    <style>
+    /* Style for the input container */
+    .input-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    /* Style for the input fields */
+    .input-field {
+        flex: 1; /* Distribute available space equally between both inputs */
+        margin-right: 10px; /* Add some spacing between the inputs */
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    
+    /* Style for the label (optional) */
+    .label {
+        width: 20%; /* Adjust the width as needed */
+        text-align: right;
+        margin-right: 10px;
+        color:#222
+        {% comment %} font-size:100% {% endcomment %}
+    }
+
+    hr {
+        border: none;
+        height: 1px;
+        background-color: black; /* Set the color to black */
+        width:100%
+    }
+
+    .tag {
+        display: flex;
+        align-items: center;    
+    }
+    .tagTitle {
+        margin-right: 20px;
+
+    }
+    .tagInput {
+        margin-right: 30px;
+    }
+    
+    </style>
+</head>
+
+<body>
+
+<form action={% url "add_meta_data" %} method='post'>
+{% csrf_token %} 
+<div class = "row">
+<div class="col-lg-6">
+
+    <div class="row">
+        <div class = "col-lg-12">
+            <div class="col-sm-6">
+                <label for = "Title">Type of Video</label>
+            </div>
+            <div class="col-sm-2">
+                
+                <select class="form-select" aria-label="Default select example" id = "programme_types" name = "programme_types">
+                    <option selected>Type of Video</option>
+                    <option value="1">Music Video</option>
+                    <option value="2">Programme</option>
+                    <option value="3">Promo</option>
+                    <option value="3">Opener</option>
+                  </select>
+            </div>
+    
+     
+    
+    
+    
+            
+        </div>
+    
+    
+    </div>
+
+
+<div class="form-group">
+    {% comment %} <input type="hidden" name="" value="{{ticket_id.title}}"> {% endcomment %}
+    {% comment %} {% if meta_data %} {% endcomment %}
+    {% comment %} {% for meta_details in meta_data %} {% endcomment %}
+        <label for="Title" >Video Name</label>
+        <input type="text" maxlength = "200"  id="title_id" class="form-control"  placeholder="" name = 'video_name' value = {{ticket_id.video_id.title}}>
+    {% comment %} {% endfor %} {% endcomment %}
+    {% comment %} {% endif %} {% endcomment %}
+</div>
+
+<div class="form-group">
+    <input type="hidden"   name="ticket_id" value={{ticket_id}}>
+    {% comment %} <input type="hidden" name="" value="{{ticket_id.artist_name}}"> {% endcomment %}
+    <label for="Title" >Artist Name</label>
+    <input type="text" maxlength = "200"   class="form-control"  placeholder=""  name="artist_name" >
+</div>
+
+{% comment %} update all the data get queries {% endcomment %}
+<div class="form-group">
+    <input type="hidden" name="" value="{{ticket_id}}">
+    <label for="Title" >Artist SD Profile</label>
+    <input type="text" maxlength = "200"   class="form-control"  placeholder=""  name="songdew_url" value = {{ticket_obj.videoid.user.slug_username}}>
+</div>
+
+<h4>Rights</h4>
+<div class="form-group">
+    <input type="hidden" name="" value="{{ticket_id.artist_name}}">
+    <label for="Title" >Territory</label>
+    <input type="text" maxlength = "200"  id="title_id" class="form-control" id="title" placeholder=""  name="territory">
+</div>
+
+{% comment %} <h4>insert duration of time here</h4> {% endcomment %}
+<div class="form-group">
+    <label for="birthdate">Duration</label>
+    <div class = "row">
+        <div class = "col-sm-6">
+            <input type="date" id="" name="duration_start">
+            <input type="date" id="" name="duration_end">
+        </div>
+    </div>
+</div>
+
+{% comment %} insert genre dropdown here {% endcomment %}
+<div class="form-group">
+    <label for="birthdate">Genre</label>
+    <div class = "row">
+        <div class = "col-sm-6">
+            <select class="form-control" name="genre" value = {{ticket_obj.videoid.genre}} multiple>
+                {% for genres in genre %}
+               <option value = "{{ genres.name }}" {%  if genres.name in meta_data.genre_of_bands %}selected{% endif %}>{{ genres.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+
+{% comment %} insert language dropdown {% endcomment %}
+<div class="form-group">
+    <label for="birthdate">Language</label>
+    <div class = "row">
+        <div class = "col-sm-6">
+            <select class="form-control" name="language" value = {{ticket_obj.videoid.language}} multiple>
+                {% for language in language_list %}
+                <option value="{{ language.name }}" {%  if language.name in meta_data.opportunity_language %}selected{% endif %}>{{ language.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    {% comment %} <input type="hidden" name="" value="{{ticket_id.artist_name}}"> {% endcomment %}
+    <label for="Title" >Youtube Link</label>
+    <input type="text" maxlength = "200"   class="form-control"  placeholder=""  name="youtube_url" value = {{ticket_obj.videoid.youtube_url}} >
+</div>
+
+{% comment %} Upload image here and it should be prefilled by epk {% endcomment %}
+
+<div class="form-group">
+    <label for="birthdate">Profile Image</label>
+    <div class = "row">
+        <div class = "col-sm-6">
+            <input type="file" class="form-control"  name = 'profile_image'>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="form-group">
+    <label for="artist_type">Artist Type</label>
+       <select class="form-control" name="artist_type" value = {{ticket_obj.videoid.user.is_type}} multiple>
+        {% for artistcat in artistcat_list %}
+      <option value="{{ artistcat.name }}" {% if artistcat.name in meta_data.artist_type %}selected{% endif %}>{{ artistcat.name }}</option>
+       {% endfor %}
+       </select>
+ </div>
+
+<div class="form-group">
+    {% comment %} <input type="hidden" name="" value="{{ticket_id.artist_name}}"> {% endcomment %}
+    <label for="Title" >Band Members</label>
+    {% comment %} <input type="text" maxlength = "200"  id="title_id" class="form-control" id="title" placeholder="Enter Title"  name="title" value="{{ticket_id.artist_name}}"> {% endcomment %}
+</div>
+
+
+
+
+<div class="input-container">
+    <label class="label" for="band-member-1">Band Member 1:</label>
+    <input type="text" id="band-member-1" class="input-field" placeholder="Name of Band Member" name = 'bm_1' >
+    <input type="text" class="input-field" placeholder="Role" name = "bm_1_role">
+</div>
+
+<div class="input-container">
+    <label class="label" for="band-member-1">Band Member 2:</label>
+    <input type="text" id="band-member-1" class="input-field" placeholder="Name of Band Member" name = "bm_2">
+    <input type="text" class="input-field" placeholder="Role" name = "bm_2_role">
+    {% comment %} <textarea></textarea> {% endcomment %}
+</div>
+
+<div class="input-container">
+    <label class="label" for="band-member-1">Band Member 3:</label>
+    <input type="text" id="band-member-1" class="input-field" placeholder="Name of Band Member" name = "bm_3">
+    <input type="text" class="input-field" placeholder="Role" name = "bm_3_role">
+</div>
+
+<div class="input-container">
+    <label class="label" for="band-member-1">Band Member 4:</label>
+    <input type="text" id="band-member-1" class="input-field" placeholder="Name of Band Member" name = "bm_4">
+    <input type="text" class="input-field" placeholder="Role" name = "bm_4_role">
+</div>
+
+
+<div class="form-group">
+    {% comment %} <input type="hidden" name="" > {% endcomment %}
+    <label for="Title" >Top Tracks</label>
+    <input type="text" maxlength = "200"  id="title_id" class="form-control" id="title" placeholder="Track #1"  name="track_1" >
+    <input type="text" maxlength = "200"  id="title_id" class="form-control" id="title" placeholder="Track #2"  name="track_2" >
+    <input type="text" maxlength = "200"  id="title_id" class="form-control" id="title" placeholder="Track #3"  name="track_3" >
+    <input type="text" maxlength = "200"  id="title_id" class="form-control" id="title" placeholder="Track #4"  name="track_4" >
+</div>
+
+</div>
+{% comment %} <hr> {% endcomment %}
+
+</div>
+
+<div class = "row">
+    <div class = "col-sm-6">
+        <div class="row">
+        <div class="col-sm-2">
+            <label for = "Title">Profile</label>
+        </div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                {% comment %} <input type="hidden" name="" value="{{ticket_id.artist_name}}"> {% endcomment %}
+                <label for="Title" >English</label>
+                <input type="text" maxlength = "200"  id="title_id" class="form-control" id="title" placeholder="Enter Profile Details in English"  name="profile_english" >
+                <label for="Title" >Preview</label>
+                <h5>#Line1</h5>
+                <h5>#Line2</h5>
+                <h5>#Line3</h5>
+                <h5>#Line4</h5>
+            </div>
+            <div class="form-group">
+                {% comment %} <input type="hidden" name="" value="{{ticket_id.artist_name}}"> {% endcomment %}
+                <label for="Title" >Hindi</label>
+                <input type="text" maxlength = "200"  id="title_id" class="form-control" id="title" placeholder="Enter Profile Detail in Hindi"  name="profile_hindi" >
+                <label for="Title" >Preview</label>
+                <h5>#Line1</h5>
+                <h5>#Line2</h5>
+                <h5>#Line3</h5>
+                <h5>#Line4</h5>
+            </div>
+            
+        </div>
+    </div>
+    </div>
+
+    <div class = "col-sm-6">
+        <div class="form-group">
+            {% comment %} <input type="hidden" name="" value="{{ticket_id.artist_name}}"> {% endcomment %}
+            <label for="Title" >EPK BIO</label>
+            <textarea type="text" maxlength = "200"  rows= '7' id="title_id" class="form-control" id="title" placeholder="Enter Title"  name="title" value="{{ticket_id.artist_name}}"></textarea>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+
+<div class = "row">
+    <div class = "col-lg-6">
+        <div class="col-sm-2">
+            <label for = "Title">Spotlight</label>
+        </div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                {% comment %} <input type="hidden" name="" value="{{ticket_id.artist_name}}"> {% endcomment %}
+                <label for="Title" >English</label>
+                <input type="text" maxlength = "200"  id="title_id" class="form-control" id="title" placeholder="Enter Spotlight Detail in English"  name="spotlight_english" value = {{ticket_obj.videoid.description}} >
+                <label for="Title" >Preview</label>
+                <h5>#Line1</h5>
+                <h5>#Line2</h5>
+                <h5>#Line3</h5>
+                <h5>#Line4</h5>
+            </div>
+            <div class="form-group">
+                {% comment %} <input type="hidden" name="" value="{{ticket_id.artist_name}}"> {% endcomment %}
+                <label for="Title" >Hindi</label>
+                <input type="text" maxlength = "200"  id="title_id" class="form-control" id="title" placeholder="Enter Spotlight Detail in Hindi"  name="spotlight_hindi" >
+                <label for="Title" >Preview</label>
+                <h5>#Line1</h5>
+                <h5>#Line2</h5>
+                <h5>#Line3</h5>
+                <h5>#Line4</h5>
+            </div>
+            
+        </div>
+    </div>
+    <div class = "col-lg-6">
+        <div class="form-group">
+            {% comment %} <input type="hidden" name="" value="{{ticket_id.artist_name}}"> {% endcomment %}
+            <label for="Title" >EPK Achievements</label>
+            <textarea type="text" maxlength = "200"  rows= '7' id="title_id" class="form-control" id="title" placeholder="Enter Title"  name="title" value="{{ticket_id.artist_name}}"></textarea>
+        </div>
+    </div>
+</div>
+
+
+
+<div class = "row">
+    <div class="col-lg-12 bg-secondary-subtle">
+        <h2>Tags</h2>
+        </div>
+    <div class="row">
+        <div class = "col-lg-6">
+            <div class="col-sm-2">
+                <label for = "Title">Video Quality</label>
+            </div>
+            <div class="col-sm-10">
+                
+                <select class="form-select" aria-label="Default select example" id = "video_quality_tag" name = "video_quality_tag">
+                    <option selected>Select Video Quality</option>
+                    <option value="1">A+</option>
+                    <option value="2">A</option>
+                    <option value="3">B</option>
+                </select>
+            </div>
+
+
+
+
+
+            
+        </div>
+
+
+    </div>
+
+
+   {% comment %} LED BY {% endcomment %}
+    <div class="row">
+        <div class = "col-lg-6">
+            <div class="col-sm-2">
+                <label for = "Title">Led By</label>
+            </div>
+            <div class="col-sm-10">
+                
+                <select class="form-select" aria-label="Default select example" name = "gender_video_tag">
+                    <option selected>Select  Led By</option>
+                    <option value="1">Male</option>
+                    <option value="2">Female</option>
+                    <option value="3">Queer</option>
+                  </select>
+            </div>
+    
+    
+    
+    
+    
+            
+        </div>
+    
+    
+    </div>
+
+    
+    {% comment %} Video Type
+    
+
+    
+    {% endcomment %}
+
+    <div class="row">
+        <div class = "col-lg-6">
+            <div class="col-sm-2">
+                <label for = "Title">Video Type</label>
+            </div>
+            <div class="col-sm-10">
+                
+                <select class="form-select" aria-label="Default select example" name = "video_type_tag">
+                    <option selected>Select Video Type</option>
+                    <option value="1">Live</option>
+                    <option value="2">Storyline</option>
+                    <option value="3">Animation</option>
+                    <option value="4">Performance Video</option>
+                    <option value="5">Lyrics</option>
+
+                  </select>
+            </div>
+            
+        </div>
+    
+    </div>
+
+
+
+    <div class="row">
+        <div class = "col-lg-6">
+            <div class="col-sm-2">
+                <label for = "Title">Year of Release</label>
+            </div>
+            <div class="col-sm-10">
+                
+                <div class="form-group">
+                    {% comment %} <label for="exampleFormControlInput1">Guration/label> {% endcomment %}
+                    <input type="Duration" class="form-control" id="exampleFormControlInput1" placeholder="Year of Release" name = "video_year_release">
+                </div>
+            </div>
+            
+        </div>
+    
+    </div>
+
+
+    <div class="row">
+        <div class = "col-lg-6">
+            <div class="col-sm-2">
+                <label for = "Title">Debut/ Not</label>
+            </div>
+            <div class="col-sm-10">
+                
+                <select class="form-select" aria-label="Default select example" name = "debut_video">
+                    <option selected>Select Debut Type</option>
+                    <option value="1">Yes</option>
+                    <option value="2">No</option>
+                    
+
+                  </select>
+            </div>
+            
+        </div>
+    
+    </div>
+
+    <div class="row">
+        <div class = "col-lg-6">
+            <div class="col-sm-2">
+                <label for = "Title">Mood</label>
+            </div>
+            <div class="col-sm-10">
+                
+                <select class="form-select" aria-label="Default select example" id = "video_mood_tags" name = "video_mood_tag">
+                    <option selected>Select Mood Type</option>
+                    <option value="1">Happy</option>
+                    <option value="2">Sad</option>
+                    <option value="3">Chill</option>
+                    <option value="4">Funny</option>
+                    <option value="5">Anger</option>
+                    <option value="6">Nostalgic</option>
+                    
+
+                  </select>
+            </div>
+            
+        </div>
+    
+    </div>
+
+
+    <div class="row">
+        <div class = "col-lg-6">
+            <div class="col-sm-2">
+                <label for = "Title">Theme</label>
+            </div>
+            <div class="col-sm-10">
+                
+                <select class="form-select" aria-label="Default select example" name = "video_themes">
+                    <option selected>Select Theme Type</option>
+                    <option value="1">Love </option>
+                    <option value="2">Devotional</option>
+                    <option value="3">Self Realization/ Story</option>
+                    <option value="4">Friendship</option>
+                    <option value="5">Inspiration</option>
+                    <option value="6">Heartbreak</option>
+                    <option value="7">Rebel/ Anti-Establishment</option>
+                    <option value="8">Travel</option>
+                    <option value="9">Life</option>
+                    
+
+                  </select>
+            </div>
+            
+        </div>
+    
+    </div>
+
+
+    <div class="row">
+        <div class = "col-lg-6">
+            <div class="col-sm-2">
+                <label for = "Title">Upload Screenshot for Card</label>
+            </div>
+            <div class="col-sm-10">
+                
+                {% comment %} <label class="form-label" for="customFile">Default file input example</label> {% endcomment %}
+                <input type="file" class="form-control" id="customFile"  name = "screenshot_upload" />
+            </div>
+            
+        </div>
+    
+    </div>
+
+
+    <div class="row">
+        <div class = "col-lg-6">
+            <div class="col-sm-2">
+                <label for = "Title">Playlist Inclusion</label>
+            </div>
+            <div class="col-sm-10">
+                
+                <select class="form-select" aria-label="Default select example" name = "playlist_inclusion">
+                    <option selected>Select Playlist</option>
+                    <option value="1">Best of Pop </option>
+                    <option value="2">Best of Rock</option>
+                    <option value="3">Best of Hip Hop</option>
+                </select>
+            </div>
+            
+        </div>
+
+
+    
+
+    
+
+
+</div>
+   
+</div>
+
+    <div class = "row">
+        <div class="col-sm-12 text-right" >
+            {% comment %} <div class =  {% endcomment %}
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </div>
+    </div>
+
+
+</form>
+</body>
+
+
+
+
+
+
+
+    {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+

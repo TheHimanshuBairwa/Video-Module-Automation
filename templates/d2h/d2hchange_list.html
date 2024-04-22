@@ -1,0 +1,12 @@
+{% extends 'admin/change_list.html' %}
+
+{% block object-tools %}
+<div>
+ <div> <b>Unique participations </b>: {{unique_count}}</div>
+<div> <b>Total participations </b> : {{total_count}}</div>
+<div> <b>Registered Users </b> : {{registered_users}}</div>
+<br>
+</div>
+
+{{ block.super }}
+{% endblock %}

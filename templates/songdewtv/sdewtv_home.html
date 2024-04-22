@@ -1,0 +1,218 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Songdew TV{% endblock %}
+
+{% block content %}
+	<div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">Songdew TV</h3>
+            <!-- /.box-header -->
+                        {% if perms.songdew_tv.add_songdewtv %}
+                <div class="box-footer clearfix">
+                  <a href="{% url 'add_tvdata' %}" class="btn btn-sm btn-info btn-flat pull-left">Add Data</a>&nbsp&nbsp
+                  <a onclick="search_function()" class="btn btn-sm btn-info btn-flat">Search User</a>
+                   <a onclick="update_function()" class="btn btn-sm btn-info btn-flat pull-right">Update</a>
+                </div>
+            {% endif %}
+          </div>
+            <div class="search form" style="display: none;">
+               <form action="{% url 'search_result' %}" method='post'>
+                {% csrf_token %}
+                    <form method="post">
+                              {{ form.media }}
+
+                          {% for field in form.visible_fields %}
+                              <div class="form-group">
+                              {% csrf_token %}
+                             
+                              {{field.label_tag}} 
+                           {% if field.field.required %} * {% endif %}  
+                              {{ field }}
+                              {% if form.errors %}
+                                  {% for error in field.errors %}
+                                          <strong style="color: red">{{ error|escape }}</strong>
+                                  {% endfor %}
+                              {% for error in form.non_field_errors %}
+                                  <strong style="color: red">{{ error|escape }}</strong>
+                              {% endfor %}
+                          {% endif %}
+                              </div>
+
+                          {% endfor %}
+                          <input type="submit" value="Search" />
+                        </form>
+                      </div>
+
+            <div class="box-body">
+              <div class="table-responsive">
+                <table class="table no-margin">
+                  <thead>
+                  <tr>
+                    <th></th>
+                    <th><a href="/songdewtv/?sid={{ s_id }}">ID</th>
+                    <th><a href="/songdewtv/?su={{ s_updated }}">Last Updated</a></th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Profile Link</th>
+                    <th>Biography</th>
+                    <th>Achievement</th>
+                    <th>SMS Code</th>
+                    <th>Likes</th>
+                    <th>Top track1</th>
+                    <th>Top track2</th>
+                    <th>Top track3</th>
+                    <th>Top track4</th>
+                    <th>Top track5</th>
+                    <th>Video title</th>
+                    <th>Social Followers</th>
+                    <th>Plays</th>
+                    <th>Genre</th>
+                    <th>Video Id</th>
+                    <th>Band Pic</th>
+                    <th>Songdew url</th>
+                    <th>Youtube url</th>
+                    <th>Band member1</th>
+                    <th>Band member1 role</th>
+                    <th>Band member2</th>
+                    <th>Band member2 role</th>
+                    <th>Band member3</th>
+                    <th>Band member3 role</th>
+                    <th>Band member4</th>
+                    <th>Band member4 role</th>
+                    <th>Band member5</th>
+                    <th>Band member5 role</th>
+                    <th>Band member6</th>
+                    <th>Band member6 role</th>
+                    <th>Band member7</th>
+                    <th>Band member7 role</th>
+                    <th>Band member8</th>
+                    <th>Band member8 role</th>
+                    <th>Band member9</th>
+                    <th>Band member9 role</th>
+                    <th>Band member10</th>
+                    <th>Band member10 role</th>
+                    <th>Band member11</th>
+                    <th>Band member11 role</th>
+                    <th>Band member12</th>
+                    <th>Band member12 role</th>
+                    <th>Band member13</th>
+                    <th>Band member13 role</th>
+                    <th>Band member14</th>
+                    <th>Band member14 role</th>
+                    <th>Band member15</th>
+                    <th>Band member15 role</th>
+                    <th>Published</th>
+                    <th>Ordering</th>
+                    
+                   
+                  </tr>
+                  </thead>
+                  <tbody>
+                  	{% if result_list %}
+	                  	{% for data in result_list %}
+	                  		<tr>
+                        <td><input class="edit-checkbox" type="checkbox" name="edit" value="{{data.id}}"></td>
+                    <td>{{ data.id }}</td>
+                    <td>{{data.updated_date}}</td>
+                    <td>{{ data.name }}</td>
+                    <td>{{ data.username }}</td>
+                    <td>{{ data.profile_link }}</td>
+                    <td><p  style="overflow: hidden; width: 100px; height:40px; text-align: left; valign: top; whitespace: nowrap; text-overflow: ellipsis;" >{{ data.biography }}</p></td>
+                    <td><p style="overflow: hidden; width: 100px; height:40px; text-align: left; valign: top; whitespace: nowrap; text-overflow: ellipsis;">{{ data.achievement }}</p></td>
+                    <td>{{ data.sms_code }}</td>
+                    <td>{{ data.likes }}</td>
+                    <td>{{ data.toptrack1 }}</td>
+                    <td>{{ data.toptrack2 }}</td>
+                    <td>{{ data.toptrack3 }}</td>
+                    <td>{{ data.toptrack4 }}</td>
+                    <td>{{ data.toptrack5 }}</td>
+                    <td>{{ data.video_title }}</td>
+                    <td>{{ data.social_followers }}</td>
+                    <td>{{ data.plays }}</td>
+                    <td>{{ data.genre }}</td>
+                    <td>{{ data.video_id }}</td>
+                    <td>{{ data.band_pic }}</td>
+                    <td>{{ data.songdew_url }}</td>
+                    <td>{{ data.youtube_url }}</td>
+                    <td>{{ data.band_member1 }}</td>
+                    <td>{{ data.band_member1_role }}</td>
+                    <td>{{ data.band_member2 }}</td>
+                    <td>{{ data.band_member2_role }}</td>
+                    <td>{{ data.band_member3 }}</td>
+                    <td>{{ data.band_member3_role }}</td>
+                    <td>{{ data.band_member4 }}</td>
+                    <td>{{ data.band_member4_role }}</td>
+                    <td>{{ data.band_member5 }}</td>
+                    <td>{{ data.band_member5_role }}</td>
+                    <td>{{ data.band_member6 }}</td>
+                    <td>{{ data.band_member6_role }}</td>
+                    <td>{{ data.band_member7 }}</td>
+                    <td>{{ data.band_member7_role }}</td>
+                    <td>{{ data.band_member8 }}</td>
+                    <td>{{ data.band_member8_role }}</td>
+                    <td>{{ data.band_member9 }}</td>
+                    <td>{{ data.band_member9_role }}</td>
+                    <td>{{ data.band_member10 }}</td>
+                    <td>{{ data.band_member10_role }}</td>
+                    <td>{{ data.band_member11 }}</td>
+                    <td>{{ data.band_member11_role }}</td>
+                    <td>{{ data.band_member12 }}</td>
+                    <td>{{ data.band_member12_role }}</td>
+                    <td>{{ data.band_member13 }}</td>
+                    <td>{{ data.band_member13_role }}</td>
+                    <td>{{ data.band_member14 }}</td>
+                    <td>{{ data.band_member14_role }}</td>
+                    <td>{{ data.band_member15 }}</td>
+                    <td>{{ data.band_member15_role }}</td>
+                    <td>{{ data.published }}</td>
+                    <td>{{ data.ordering }}</td>
+                   
+                    {% if perms.songdew_tv.delete_songdewtv %}
+                        <td><a href="/songdewtv/{{data.id}}/delete">Delete</a></td>
+			        {% endif %}
+                              </tr>
+	                  	{% endfor %}
+	                {% else %}
+						<td>No Data</td>
+					{% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+            <!-- /.box-body -->
+            <!-- /.box-footer -->
+          </div>
+          <script type="text/javascript">
+              function search_function()
+              {
+                console.log("search");
+                document.getElementsByClassName("search form")[0].style.display='block';
+              }
+              function update_function()
+              {
+                  var pickedOne = false;
+                  var inputs = document.getElementsByClassName('edit-checkbox');
+                  var count=0;
+                  for(var i = 0, l = inputs.length; i < l; ++i) 
+                  {
+                    if(inputs[i].checked) 
+                    {
+                        pickedOne = true;
+                        count++;
+                        console.log(inputs[i].value);
+                        document.getElementsByClassName("btn btn-sm btn-info btn-flat pull-right")[0].href="/songdewtv/"+inputs[i].value+"/update"
+                    }
+                  }
+                  if(count>1)
+                  {
+                    alert('Select one row only')
+                    document.getElementsByClassName("btn btn-sm btn-info btn-flat pull-right")[0].href=""
+                  }
+                  if(!pickedOne) 
+                  {
+                    alert('Make selection');
+                  }
+              }
+          </script>
+{% endblock %}

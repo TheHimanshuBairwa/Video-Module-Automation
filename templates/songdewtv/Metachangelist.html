@@ -1,0 +1,173 @@
+{% extends 'admin/change_list.html' %}
+{% block object-tools %}
+
+
+
+
+
+
+
+
+{% comment %} {% endblock %}  {% endcomment %}
+{% endblock %}
+
+
+
+
+
+
+{% comment %} <!DOCTYPE html>
+<html>
+<head>
+    <title>Dropdown Filter Example</title>
+</head>
+<body>
+    <h1>Dropdown Filter Example</h1>
+
+    <label for="filterDropdown">Filter by:</label>
+    <select id="filterDropdown">
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+        <option value="option4">Option 4</option>
+    </select>
+
+    {% comment %} <ul id="filteredItems">
+        <li>Item 1 - Option 1</li>
+        <li>Item 2 - Option 2</li>
+        <li>Item 3 - Option 3</li>
+        <li>Item 4 - Option 4</li>
+    </ul> {% endcomment %}
+
+    {% comment %} <script>
+        // Get references to the dropdown and list elements
+        var filterDropdown = document.getElementById("filterDropdown");
+        var filteredItems = document.getElementById("filteredItems"); {% endcomment %}
+
+        {% comment %} // Add an event listener to the dropdown to filter the list {% endcomment %}
+        {% comment %} filterDropdown.addEventListener("change", function () { {% endcomment %}
+            {% comment %} var selectedOption = filterDropdown.value;
+            
+            // Hide all list items
+            var items = filteredItems.getElementsByTagName("li");
+            for (var i = 0; i < items.length; i++) {
+                items[i].style.display = "none";
+            }
+            
+            // Show only the selected items
+            var selectedItems = filteredItems.querySelectorAll("li:contains('" + selectedOption + "')");
+            for (var j = 0; j < selectedItems.length; j++) {
+                selectedItems[j].style.display = "block";
+            }
+        }); {% endcomment %}
+
+        {% comment %} // Custom function to check if an element contains text
+        function contains(element, text) {
+            return element.textContent.toLowerCase().includes(text.toLowerCase());
+        } {% endcomment %}
+    {% comment %} </script>
+</body>
+</html> {% endcomment %} 
+
+
+
+
+
+
+
+{% comment %} <div class="container">
+
+  <!-- Modal -->
+  <div class="modal" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Preview Document</h4>
+           <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="document"></p>
+        </div>
+        <div class="modal-footer">
+        	<a id="sendbutton" class="button" href=""> Send  </a> 
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+</div> {% endcomment %}
+
+{% comment %} {{ block.super }} {% endcomment %}
+
+
+
+{% comment %} <div class="module filtered" id="changelist">
+
+  <div id="toolbar"><form id="changelist_search" method="get" _lpchecked="1">
+  <div><!-- DIV needed for valid HTML -->
+      
+  <select id="searchBy" style="height: 32px; vertical-align: top;" >
+    <option style="font-size:13px !important;" value="user">User</option>
+    <option style="font-size:13px !important;" value="email">Email</option>
+    <option style="font-size:13px !important;" value="authorized_signatory">Signatory</option>
+
+  </select>
+  <input style="height: 32px !important" type="text" size="40" name="q" value="" id="searchbar" autofocus="">
+  <!-- <input type="hidden" name="hiddenSearchBy" id="hiddenSearchBy"> -->
+
+  <input type="submit" value="Search" onclick="submitted()">
+  
+  
+  </div>
+  </form></div> {% endcomment %}
+  
+{% comment %} <script>
+  function submitted() {
+    document.getElementById('searchbar').value +=  "__"+ document.getElementById('searchBy').value
+}
+</script> {% endcomment %}
+
+
+
+{% comment %} <p1>hi himanshu here</p1> {% endcomment %}
+
+
+{% comment %} {% endblock %} {% endcomment %}
+
+{% comment %} {% block object-tools-items %}
+  {{ block.super}}
+<li>
+ 
+    {% include "opportunity/export_csv.html" with data_dict=ticket_fields_dict %}
+    <script>
+
+  window.addEventListener("load", function(){
+    var currentElement = document.getElementById('dropdownMenuButton');
+    currentElement.classList.remove('btn')
+    currentElement.classList.remove('btn-secondary')
+    // currentElement.remove('csvbtn')
+
+
+    currentElement.style.background='#999'
+
+
+})
+
+    </script>
+
+</li>
+
+  
+
+  <link rel="stylesheet" href="/static/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="/static/bootstrap.min.js"></script>
+
+
+
+  {% endblock %} {% endcomment %}
